@@ -1,0 +1,14 @@
+query ($login: String!) {
+    user(login: $login) {
+        starredRepositories {
+            edges {
+                node {
+                    nameWithOwner
+                    description
+                    url
+		    id
+                }
+            }
+        }
+    }
+}

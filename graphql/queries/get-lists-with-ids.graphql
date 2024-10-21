@@ -1,0 +1,18 @@
+query GetListsWithIds($pageSize: Int = 100, $cursor: String) {
+    viewer {
+      lists(first:$pageSize, after:$cursor) {
+        nodes {
+          name
+          description
+          id
+	  lastAddedAt
+        }
+        pageInfo {
+        	endCursor
+        	startCursor
+        	hasNextPage
+        	hasPreviousPage
+      	}
+      }
+    }
+}

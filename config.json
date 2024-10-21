@@ -1,0 +1,4 @@
+{
+  "viewCommand": "less",
+  "previewCommand": "cat"
+}

@@ -1,0 +1,6 @@
+schema: ./schema.docs.graphql
+# schema:
+#   - https://api.github.com/graphql:
+#       headers:
+#         User-Agent: 'Neovim'
+documents: './.graphql/**/*.{graphql,js,ts,jsx,tsx}'
