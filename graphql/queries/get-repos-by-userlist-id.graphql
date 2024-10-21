@@ -1,0 +1,24 @@
+# graphql-schema: https://api.github.com/graphql 
+# schema: https://api.github.com/graphql 
+
+query GetReposByUserListId($nodeId: ID!) {
+  node(id: $nodeId) {
+    ... on UserList {
+      items(first:100, after:null) {
+        nodes {
+          ... on Repository {
+            nameWithOwner
+            description
+            homepageUrl
+            sshUrl
+            url
+            isFork
+            description
+            resourcePath
+	    id
+	  }
+	}
+      }
+    }
+  }
+}

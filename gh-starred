@@ -1,35 +1,135 @@
 #!/usr/bin/env bash
-set -e
+VERSION="0.1.0"
 
-echo "Hello gh-starred!"
+__dirname__="$(dirname "${0}")"
+source "${__dirname__}/lib.sh"
 
-# Snippets to help get started:
+MAN=$(
+    cat <<EOF 
+Fuzzy-search, preview and view starred repositories and user lists.
 
-# Determine if an executable is in the PATH
-# if ! type -p ruby >/dev/null; then
-#   echo "Ruby not found on the system" >&2
-#   exit 1
-# fi
+USAGE:
+  gh starred <command> [flags]
 
-# Pass arguments through to another command
-# gh issue list "$@" -R cli/cli
+AVAILABLE COMMANDS
+  config:       Configure default settings.
 
-# Using the gh api command to retrieve and format information
-# QUERY='
-#   query($endCursor: String) {
-#     viewer {
-#       repositories(first: 100, after: $endCursor) {
-#         nodes {
-#           nameWithOwner
-#           stargazerCount
-#         }
-#       }
-#     }
-#   }
-# '
-# TEMPLATE='
-#   {{- range $repo := .data.viewer.repositories.nodes -}}
-#     {{- printf "name: %s - stargazers: %v\n" $repo.nameWithOwner $repo.stargazerCount -}}
-#   {{- end -}}
-# '
-# exec gh api graphql -f query="${QUERY}" --paginate --template="${TEMPLATE}"
+FLAGS:
+  -l, --list    Fuzzy search user lists.
+  --help    	Show help for a command
+  --version    	Prints extension version information
+
+NOTE:
+  This GitHub CLI extension has hard dependencies on the 'fzf' and 'jq' command-line tools.
+
+LEARN MORE
+  Use 'gh <command> <subcommand> --help' for more information about a command.
+  Read the manual at https://cli.github.com/manual
+
+
+EOF
+)
+
+MAN_CONFIG=$(
+    cat <<EOF 
+Configure default settings for this subcommand.
+
+USAGE:
+  gh starred config <flags>
+
+FLAGS
+  -p, --preview    The program to use to preview a repositorys' README. E.g. 'batcat' or 'glow'. Defaults to 'cat'.
+  -v, --view       The program to use to view a repository. E.g. 'batcat' or 'glow'. Defaults to 'cat'.
+
+INHERITED FLAGS
+  --help    	  Show help for a command
+  --version    	  Prints extension version information.
+
+NOTE:
+  This GitHub CLI extension has a hard dependency on the 'fzf' and 'jq' command-line tools.
+
+LEARN MORE
+  Use 'gh <command> <subcommand> --help' for more information about a command.
+  Read the manual at https://cli.github.com/manual
+
+
+EOF
+)
+
+if [[ "$1" != "config" ]]; then
+    OPTS=$(getopt -o 'hVvl' --long 'help,version,list' -n "gh starred" -- "$@")
+
+    if [ $? -ne 0 ]; then
+	exit 1
+    fi
+
+    eval set -- "$OPTS"
+    unset OPTS
+fi
+
+USERNAME=$(gh config get -h github.com user)
+
+while true; do
+    case "$1" in
+	'--help')
+	    echo "$MAN"
+	    exit 0
+	    ;;
+	'-V'|'-v'|'--version')
+	    echo "$VERSION"
+	    exit 0
+	    ;;
+	'-l'|'--list')
+	    get_user_lists "$__dirname__" "$USERNAME"
+	    exit 0
+	    ;;
+	'--')
+	    shift
+	    break
+	    ;;
+	'config')
+	    shift
+	    # Parse options for subcommand 'config'
+	    OPTS=$(getopt -o 'hpvl' --long 'help,preview:,view:,l' -n "gh starred config" -- "$@")
+	    if [ $? -ne 0 ]; then
+		exit 1
+	    fi
+	    eval set -- "$OPTS"
+	    unset OPTS
+	    while true; do
+		case "$1" in
+		    '-h'|'--help')
+			echo "$MAN_CONFIG"
+			exit 0
+			;;
+		    '-v'|'--view')
+			config_set_view "$__dirname__" "$2"
+			exit 0
+			;;
+		    '-p'|'--preview')
+			config_set_preview "$__dirname__" "$2"
+			exit 0
+			;;
+		    '-l'|'--list')
+			jq < "$__dirname__/config.json" 
+			exit 0
+			;;
+		    '--')
+			echo "$MAN_CONFIG"
+			exit 1
+			;;
+		    *)
+			echo "fatal: failed to parse 'config' option '$1'" >&2
+			exit 1
+			;;
+		esac
+	    done
+	    ;;
+	*)
+	    echo "fatal: failed to parse option '$1'" >&2
+	    exit 1
+	    ;;
+    esac
+done
+
+get_starred_repos "$__dirname__" "$USERNAME"

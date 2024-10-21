@@ -1,0 +1,16 @@
+query GetReposByUserListId($nodeId: ID!) {
+  node(id: $nodeId) {
+    ... on Repository {
+      masterReadme: object(expression: "master:README.md") {
+        ... on Blob {
+          text
+        }
+      }
+      mainReadme: object(expression: "main:README.md") {
+        ... on Blob {
+          text
+        }
+      }
+    }
+  }
+}
