@@ -71,7 +71,7 @@ USERNAME=$(gh config get -h github.com user)
 
 while true; do
     case "$1" in
-	'--help')
+	'-h'|'--help')
 	    echo "$MAN"
 	    exit 0
 	    ;;

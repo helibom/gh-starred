@@ -37,7 +37,7 @@ gh extension remove starred
 
 ## Usage
 
-Make sure that your authenticated to the GitHub CLI by first running `gh auth login` and follow the prompted instructions.
+Make sure that you're authenticated to the GitHub CLI by first running `gh auth login` and follow the prompted instructions.
 
 ### Help
 
@@ -91,7 +91,7 @@ Type `_` to hide the previewer.
   <img src="./assets/finder-preview.webp" alt="Preview README in finder">
 </figure>
 
-### Configure Previw Command in Finder
+### Configure Preview Command in Finder
 
 You can configure the command used to preview a README inside the finder by running:
 ```bash
