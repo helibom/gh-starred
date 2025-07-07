@@ -14,6 +14,8 @@
   - [Preview READMEs in the Finder](#preview-readmes-in-the-finder)
   - [Configure Preview Command in Finder](#configure-previw-command-in-finder)
   - [Open the Repository in the Browser](#open-the-repository-in-the-browser)
+- [Limitations](#limitations)
+- [Roadmap](#roadmap)
 
 ## Installation
 
@@ -118,3 +120,17 @@ Pressing `Ctrl-T` inside the finder will open the selected repository in your de
 <figure>
   <img src="./assets/finder-browser.webp" alt="Configure previewer">
 </figure>
+
+--- 
+
+## Limitations
+
+A known limitation of this extensions is that it does not traverse paged responses returned by the GitHub GraphQL API.
+Therefore, look ups will currently be limited to the first 100 repositories returned by the API,
+regardless if the query is for all starred repositories or starred repositories in a specific list.
+
+## Roadmap
+
+- [ ] Add functionality to browse through paged responses.
+- [ ] Implement the interface as a client speaking to `fzf` as a HTTP server.
+
